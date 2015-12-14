@@ -1,6 +1,6 @@
 GollumJS.Utils.global().ZTPlugin = new GollumJS.Class({
 	
-	Extends: App.Plugin,
+	Extends: Server.Plugin,
 
 	initialize: function (metaInfos) {
 		console.debug ('Create instance '+metaInfos.id);
