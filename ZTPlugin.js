@@ -1,33 +1,42 @@
-GollumJS.Utils.global().ZTPlugin = new GollumJS.Class({
-	
-	Extends: Server.Plugin,
+GollumJS.NS(function() {
 
-	initialize: function (metaInfos) {
-		console.debug ('Create instance '+metaInfos.id);
-	},
+	this.ZTPlugin = new GollumJS.Class({
+		
+		Extends: Server.Plugin,
 
-	beforeLoad: function () {
-		console.debug ('ZTPlugin beforeLoad');
-	},
+		initialize: function (container) {
+			this.parent(container);
+			console.debug ('Create instance '+container.getMetaInfos.id);
+		},
 
-	load: function () {
-		console.debug ('ZTPlugin load');
-	},
+		initialize: function (metaInfos) {
+			this.metaInfos = metaInfos;
+		},
 
-	afterLoad: function () {
-		console.debug ('ZTPlugin afterLoad');
-	},
+		beforeEnableProcess: function () {
+			console.debug ('ZTPlugin beforeEnableProcess');
+		},
 
-	beforeUnload: function () {
-		console.debug ('ZTPlugin beforeUnload');
-	},
+		enable: function () {
+			console.debug ('ZTPlugin enable');
+		},
 
-	unLoad: function () {
-		console.debug ('ZTPlugin unLoad');
-	},
+		afterEnableProcess: function () {
+			console.debug ('ZTPlugin afterEnableProcess');
+		},
 
-	afterUnload: function () {
-		console.debug ('ZTPlugin afterUnload');
-	}
+		beforeDisableProcess: function () {
+			console.debug ('ZTPlugin beforeDisableProcess');
+		},
+
+		disable: function () {
+			console.debug ('ZTPlugin disable');
+		},
+
+		afterDisableProcess: function () {
+			console.debug ('ZTPlugin afterDisableProcess');
+		}
+
+	});
 
 });
