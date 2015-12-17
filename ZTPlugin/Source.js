@@ -13,21 +13,7 @@ GollumJS.NS(ZTPlugin, function() {
 		},
 
 		getMedias: function (group) {
-			var _this = this;
-			return new Promise(function(resolve, reject) {
-				resolve([
-					{	
-						plugin: _this.plugin.id(),
-						id: 1,
-						name: "Game Of Thrones",
-					},
-					{	
-						plugin: _this.plugin.id(),
-						id: 2,
-						name: "Star Trek",
-					}
-				]);
-			});
+			return this.plugin.caller.serie.list();
 		}
 
 	});

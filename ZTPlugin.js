@@ -5,9 +5,14 @@ GollumJS.NS(function() {
 		Extends: Server.Plugin,
 
 		source: null,
+		caller: {},
 
 		enable: function (done) {
 			console.log ('ZTPlugin enable');
+
+			this.caller = {
+				serie: new ZTPlugin.ZTCaller.Serie(this)
+			};
 
 			this.source = new ZTPlugin.Source(this);
 			this.server().mediasManager.registerSource(this.source);

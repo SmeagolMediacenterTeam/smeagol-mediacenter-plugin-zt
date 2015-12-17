@@ -1,4 +1,6 @@
 [
 	"ZTPlugin.js",
-	"ZTPlugin/Source.js"
+	"ZTPlugin/Source.js",
+	"ZTPlugin/ZTCaller.js",
+	"ZTPlugin/ZTCaller/Serie.js"
 ]
