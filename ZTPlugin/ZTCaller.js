@@ -1,10 +1,12 @@
 GollumJS.NS(ZTPlugin, function() {
 
 	var Promise = require('rsvp').Promise;
-	var request = new Server.Request();
 	var JSDom   = require('jsdom');
 	var FS      = require('fs-promise');
 	var FSExtra = require('fs-extra-promise');
+
+	var request   = new Server.Request();
+	var scheduler = new Server.Scheduler();
 
 	this.ZTCaller = new GollumJS.Class({
 
@@ -59,20 +61,28 @@ GollumJS.NS(ZTPlugin, function() {
 
 		_requestPage: function (url) {
 			var _this = this;
-			return request.get(url, {
+			return scheduler.push(function (resolve, reject, next) {
+				request.get(url, {
 					resolveWithFullResponse: true
 				})
-				.then(function (resp) {
+					.then(resolve)
+					.catch (reject)
+					.finally(function() {
+						next();
+					})
+				;
+			})
+				.then(function(resp) {
 					if (resp.statusCode == 200) {
 						return resp.body;
 					}
 					throw new Error("ZTCaller: Error statusCode "+resp.statusCode+" for page : "+url);
 				})
-				.then(function (content) {
-					return _this._cacheUrl(url, content)
-						.then (function() { return content; })
-					;
-				})
+				// .then(function (content) {
+				// 	return _this._cacheUrl(url, content)
+				// 		.then (function() { return content; })
+				// 	;
+				// })
 				.then(function (content) { 
 					console.log ("ZTCaller: Response page : "+url);
 					return content;
