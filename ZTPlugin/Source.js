@@ -6,14 +6,24 @@ GollumJS.NS(ZTPlugin, function() {
 
 		Extends: Server.Source,
 
-		plugin: null,
-
-		initialize: function (plugin) {
-			this.plugin = plugin;
+		getMedias: function (group) {
+			switch (group) { 
+				case 'serie':
+					return this.plugin.caller.serie.list();
+				default:
+					break;
+			}
+			return this.parent().getMedias(group);
 		},
 
-		getMedias: function (group) {
-			return this.plugin.caller.serie.list();
+		getDetails: function (group, id) {
+			switch (group) { 
+				case 'serie':
+					return this.plugin.caller.serieDetails.find(id);
+				default:
+					break;
+			}
+			return this.parent().getDetails(group, id);
 		}
 
 	});

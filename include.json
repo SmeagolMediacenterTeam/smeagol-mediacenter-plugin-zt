@@ -2,5 +2,6 @@
 	"ZTPlugin.js",
 	"ZTPlugin/Source.js",
 	"ZTPlugin/ZTCaller.js",
-	"ZTPlugin/ZTCaller/Serie.js"
+	"ZTPlugin/ZTCaller/Serie.js",
+	"ZTPlugin/ZTCaller/SerieDetails.js"
 ]

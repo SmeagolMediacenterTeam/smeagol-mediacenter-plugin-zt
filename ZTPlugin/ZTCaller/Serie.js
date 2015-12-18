@@ -1,6 +1,7 @@
 GollumJS.NS(ZTPlugin.ZTCaller, function() {
 
-	var Promise = require('rsvp').Promise;
+	var Promise   = require('rsvp').Promise;
+	var UniqMedia = Server.Media.Entity.UniqMedia;
 
 	this.Serie = new GollumJS.Class({
 
@@ -23,20 +24,14 @@ GollumJS.NS(ZTPlugin.ZTCaller, function() {
 				
 				for (var i = 0; i < as.length; i++) {
 					var a = $(as[i]);
-					list.push ({//new App.Entity.Serie(
-						plugin: _this.plugin.id(),
-						id: _this.href2Id(a.attr('href')),
-						name: a.text(),
-						href: a.attr('href'),
-						canonical: _this.href2Canonical(a.attr('href'))
-					});
+					list.push (new UniqMedia(
+						_this.source,
+						_this.href2Id(a.attr('href')),
+						a.text()
+					));
 				}
 				resolve(list);
 			});
-		},
-
-		href2Canonical: function(href) {
-			return this.self.ZT_URL+"/series/"+this.href2Id(href)+"-.html";
 		},
 
 		href2Id: function(href) {
@@ -50,7 +45,7 @@ GollumJS.NS(ZTPlugin.ZTCaller, function() {
 			href = href.substr(0, href.indexOf('-'));
 			return href;
 		}
-
+		
 	});
 
 });
