@@ -6,6 +6,12 @@ GollumJS.NS(ZTPlugin, function() {
 
 		Extends: Server.Source,
 
+		getGroups: function (name) {
+			return Server.Utils.Promise.resolve([
+				'serie'
+			]);
+		},
+
 		getMedias: function (group) {
 			switch (group) { 
 				case 'serie':
@@ -25,7 +31,7 @@ GollumJS.NS(ZTPlugin, function() {
 			}
 			return this.parent().getDetails(group, id);
 		}
-
+		
 	});
 
 });
