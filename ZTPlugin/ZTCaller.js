@@ -8,6 +8,8 @@ GollumJS.NS(ZTPlugin, function() {
 	var request   = new Server.Request();
 	var scheduler = new Server.Scheduler();
 
+	var currentRequesdted = {};
+
 	this.ZTCaller = new GollumJS.Class({
 
 		Static: {
@@ -59,35 +61,81 @@ GollumJS.NS(ZTPlugin, function() {
 			;
 		},
 
+		_requestPageFromProxy: function (url) {
+			var _this = this;
+
+			return new Promise(function(resolve, reject) {
+				if (currentRequesdted[url]) {
+					console.log ("ZTCaller proxy: url already called:", url);
+					currentRequesdted[url].push( {
+						resolve : resolve,
+						reject: reject
+					});
+				} else {
+					console.log ("ZTCaller proxy: add url:", url);
+					currentRequesdted[url] = [{
+						resolve : resolve,
+						reject: reject
+					}];
+
+					scheduler.push(function (resolve, reject, next) {
+						console.log ("ZTCaller: Call page : "+url);
+
+						request.get(url, {
+							resolveWithFullResponse: true
+						})
+							.then(_this._matchResponse.bind(_this))
+							.then(function (content) {
+								return _this._cacheUrl(url, content)
+									.then (function() { return content; })
+								;
+							})
+							.then(function(content) {
+								var resolves = currentRequesdted[url];
+								console.log ("ZTCaller proxy: resolves "+resolves.length+" responses");
+								delete(currentRequesdted[url]);
+								for (var i= 0; i < resolves.length; i++) {
+									resolves[i].resolve(content);
+								}
+							})
+							.catch (function(error) {
+								var resolves = currentRequesdted[url];
+								console.log ("ZTCaller proxy: rejects "+resolves.length+" responses", error);
+								delete(currentRequesdted[url]);
+								for (var i= 0; i < resolves.length; i++) {
+									resolves[i].reject(error);
+								}
+							})
+							.finally(function() {
+								console.log("ZTCaller: Wait "+_this.self.RANGE_CALL_TIME+" ms for next call");
+								setTimeout(function () {
+									next();
+								}, _this.self.RANGE_CALL_TIME);
+							})
+						;
+					});
+				}
+			});
+		},
+
+		_matchResponse: function (resp) {
+			if (resp.statusCode == 200) {
+				return resp.body;
+			}
+			throw new Error("ZTCaller: Error statusCode "+resp.statusCode+" for page : "+url);
+		},
+
 		_requestPage: function (url) {
 			var _this = this;
-			return scheduler.push(function (resolve, reject, next) {
-				request.get(url, {
-					resolveWithFullResponse: true
-				})
-					.then(resolve)
-					.catch (reject)
-					.finally(function() {
-						next();
-					})
-				;
-			})
-				.then(function(resp) {
-					if (resp.statusCode == 200) {
-						return resp.body;
-					}
-					throw new Error("ZTCaller: Error statusCode "+resp.statusCode+" for page : "+url);
-				})
-				// .then(function (content) {
-				// 	return _this._cacheUrl(url, content)
-				// 		.then (function() { return content; })
-				// 	;
-				// })
+			return this._requestPageFromProxy(url)
 				.then(function (content) { 
 					console.log ("ZTCaller: Response page : "+url);
 					return content;
 				})
 				.then(this._html2Jquery.bind(this))
+				.catch(function(error) {
+					console.log(error)
+				})
 			;
 		},
 
