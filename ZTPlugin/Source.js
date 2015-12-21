@@ -1,13 +1,13 @@
 GollumJS.NS(ZTPlugin, function() {
 
-	var Promise = require('rsvp').Promise;
+	var Promise = GollumJS.Promise;
 
 	this.Source = new GollumJS.Class({
 
 		Extends: Server.Source,
 
 		getGroups: function (name) {
-			return Server.Utils.Promise.resolve([
+			return Promise.resolve([
 				'serie'
 			]);
 		},
